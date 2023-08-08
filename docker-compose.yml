@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: propfish_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: propfish_db
+      MYSQL_USER: user_koi
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - '4000:3306'
