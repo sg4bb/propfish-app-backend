@@ -15,7 +15,7 @@ dotenv.config();
 
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DMYSQL_HOST,
+      host: process.env.MYSQL_HOST,
       port: Number(process.env.MYSQL_PORT),
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,

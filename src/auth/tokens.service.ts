@@ -1,30 +1,79 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
+import { UserToken } from '../users/entities/user-token.entity';
 
 @Injectable()
 export class TokensService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserToken)
+    private readonly tokenRepository: Repository<UserToken>,
+
+    private readonly usersServices: UsersService,
   ) {}
 
-  async updateHashRefreshToken(id: string, hashRefreshToken: string) {
-    return await this.userRepository.update(id, {
-      hashRefreshToken: `${hashRefreshToken}`,
-    });
+  /***
+   * find a token
+   */
+  async findToken(userId: string) {
+    const user = await this.usersServices.findOne(userId);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const isToken = await this.tokenRepository.findOneBy({ userId: user.id });
+
+    if (!isToken) {
+      throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
+    }
+
+    return isToken.hashRefreshToken;
   }
 
-  async deleteToken(id: string) {
-    const user = await this.userRepository.findBy({ id });
+  /***
+   * update an existing user HashRefreshToken
+   */
+  async updateHashRefreshToken(userId: string, hashRefreshToken: string) {
+    await this.deleteToken(userId);
+    const newToken = await this.createToken(userId, hashRefreshToken);
+
+    return {
+      refresh_token: newToken.hashRefreshToken,
+      email: newToken.user.email,
+    };
+  }
+
+  /***
+   * create a token
+   */
+  async createToken(userId: string, hashRefreshToken: string) {
+    const user = await this.usersServices.findOne(userId);
 
     if (!user) {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     }
 
-    return await this.userRepository.update(id, {
-      hashRefreshToken: null,
-    });
+    const newToken = {
+      id: String(Date.now()),
+      hashRefreshToken: hashRefreshToken,
+      user,
+    };
+
+    return await this.tokenRepository.save(newToken);
+  }
+
+  /***
+   * delete a token
+   */
+  async deleteToken(userId: string) {
+    const user = await this.usersServices.findOne(userId);
+
+    if (!user) {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.tokenRepository.delete({ user });
   }
 }

@@ -39,8 +39,8 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   refresh(
-    @GetCurrentUser('refreshToken') refreshToken: string,
     @GetCurrentUserId() userId: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
   ) {
     return this.authService.refresh(userId, refreshToken);
   }
