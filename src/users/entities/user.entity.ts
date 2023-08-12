@@ -3,10 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { UserToken } from './user-tokens.entity';
 
 @Entity()
 export class User {
@@ -33,11 +31,6 @@ export class User {
 
   @Column()
   organization?: string;
-
-  @OneToOne(() => UserToken, (usertoken) => usertoken.id, {
-    eager: true,
-  })
-  hashRefreshToken: UserToken;
 
   @CreateDateColumn()
   createdAt: Date;

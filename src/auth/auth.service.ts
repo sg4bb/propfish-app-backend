@@ -82,15 +82,13 @@ export class AuthService {
 
   async refresh(userId: string, refreshToken: string) {
     const user = await this.usersService.findOne(userId);
+    const hashToken = await this.tokensService.findToken(userId);
 
-    if (!user || !user.hashRefreshToken) {
+    if (!user || !hashToken) {
       throw new UnauthorizedException();
     }
 
-    const isRefreshValid = await bcryptjs.compare(
-      refreshToken,
-      user.hashRefreshToken,
-    );
+    const isRefreshValid = await bcryptjs.compare(refreshToken, hashToken);
 
     if (!isRefreshValid) {
       throw new UnauthorizedException();
