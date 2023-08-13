@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import { AuthModule } from './auth/auth.module';
 import { AccessTokenGuard } from './common/guards/at.guard';
 import { UsersModule } from './users/users.module';
+import { OrganizationsModule } from './organizations/organizations.module';
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ dotenv.config();
     UsersModule,
 
     AuthModule,
+
+    OrganizationsModule,
   ],
   providers: [
     {

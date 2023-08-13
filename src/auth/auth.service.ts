@@ -77,6 +77,12 @@ export class AuthService {
   }
 
   async logout(userId: string) {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     return await this.tokensService.deleteToken(userId);
   }
 
