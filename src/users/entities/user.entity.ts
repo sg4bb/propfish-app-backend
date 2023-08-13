@@ -1,8 +1,10 @@
+import { Organization } from 'src/organizations/entities/organization.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
 
@@ -29,8 +31,13 @@ export class User {
   @Column({ default: 'https://i.imgur.com/be6Eqq9.jpg' })
   profile_pic: string;
 
-  @Column()
-  organization?: string;
+  @Column({ default: null })
+  organizationId: string;
+
+  @ManyToOne(() => Organization, (organization) => organization.id, {
+    eager: true,
+  })
+  organization: Organization;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrganizationsModule } from 'src/organizations/organizations.module';
+import { OrganizationsService } from 'src/organizations/organizations.service';
 import { UserToken } from '../users/entities/user-token.entity';
 import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
@@ -17,6 +19,7 @@ import { TokensUtilities } from './utils/tokens.util';
     UsersModule,
     TypeOrmModule.forFeature([User, UserToken]),
     JwtModule.register({}),
+    OrganizationsModule,
   ],
   providers: [
     AuthService,
@@ -25,6 +28,7 @@ import { TokensUtilities } from './utils/tokens.util';
     TokensUtilities,
     TokensService,
     UsersService,
+    OrganizationsService,
   ],
   controllers: [AuthController],
 })
